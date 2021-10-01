@@ -1,5 +1,6 @@
 import { User } from "../entities/User";
 import { MyContext } from "../types";
+import { EntityManager } from "@mikro-orm/postgresql";
 import {
   Arg,
   Ctx,
@@ -85,20 +86,26 @@ export class UserResolver {
       };
     }
     const hashedPassword = await argon2.hash(options.password);
-    const user = em.create(User, {
-      username: options.username,
-      password: hashedPassword,
-    });
+    let user;
     try {
-      await em.persistAndFlush(user);
+      const result = await (em as EntityManager)
+        .createQueryBuilder(User)
+        .getKnexQuery()
+        .insert({
+          username: options.username,
+          password: hashedPassword,
+        })
+        .returning("*");
+      user = result[0];
     } catch (err) {
-      //duplicate username errors
+      //|| err.detail.includes("already exists")) {
+      // duplicate username error
       if (err.code === "23505") {
         return {
           errors: [
             {
               field: "username",
-              message: "username already exists",
+              message: "username already taken",
             },
           ],
         };

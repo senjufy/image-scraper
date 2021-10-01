@@ -93,6 +93,11 @@ function Header() {
           </div>
         </div>
       </div>
+      <Link href={{ pathname: "/userPage", query: { keyword: "login" } }}>
+        <h2 className="text-white cursor-pointer mt-5 m-0 ml-105 leading-4 font-semibold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
+          Login/Register
+        </h2>
+      </Link>
     </div>
   );
 }
