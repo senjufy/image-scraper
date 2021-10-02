@@ -1,30 +1,44 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  ManyToOne,
+} from "typeorm";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Image {
+export class Image extends BaseEntity {
   @Field()
-  @PrimaryKey()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
-  @Property({ type: "text" })
+  @Column()
   imgSmall!: string;
 
   @Field()
-  @Property({ type: "text" })
+  @Column()
   capturedBy!: string;
 
   @Field()
-  @Property({ type: "text" })
+  @Column()
   ownerProf!: string;
 
   @Field()
-  @Property({ type: "text" })
+  @Column()
   ownerName!: string;
 
   @Field()
-  @Property({ type: "text" })
+  @Column()
   regularImage!: string;
+
+  @Field()
+  @Column()
+  creatorId: number;
+
+  @ManyToOne(() => User, (user) => user.images)
+  creator: User;
 }

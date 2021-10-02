@@ -1,44 +1,56 @@
 import { Image } from "../entities/Image";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  InputType,
+  Field,
+  Ctx,
+  UseMiddleware,
+} from "type-graphql";
 import { MyContext } from "../types";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { isAuth } from "../middleware/isAuth";
+
+@InputType()
+class ImageInput {
+  @Field()
+  imgSmall: string;
+  @Field()
+  capturedBy: string;
+  @Field()
+  ownerProf: string;
+  @Field()
+  ownerName: string;
+  @Field()
+  regularImage: string;
+}
 
 //Declaring crud/other database related operations/tasks.
 @Resolver()
 export class ImageResolver {
   //Read all posts
   @Query(() => [Image])
-  images(@Ctx() { em }: MyContext): Promise<Image[]> {
-    return em.find(Image, {});
+  async images(): Promise<Image[]> {
+    return Image.find();
   }
-
   //Mutations are updating.deleting and adding data
   @Mutation(() => Image)
+  @UseMiddleware(isAuth)
   async createImage(
-    @Arg("imgSmall") imgSmall: string,
-    @Arg("capturedBy") capturedBy: string,
-    @Arg("ownerProf") ownerProf: string,
-    @Arg("ownerName") ownerName: string,
-    @Arg("regularImage") regularImage: string,
-    @Ctx() { em }: MyContext
+    @Arg("input") input: ImageInput,
+    @Ctx() { req }: MyContext
   ): Promise<Image> {
-    const image = em.create(Image, {
-      imgSmall,
-      capturedBy,
-      ownerProf,
-      ownerName,
-      regularImage,
-    });
-    await em.persistAndFlush(image);
-    return image;
+    return Image.create({
+      ...input,
+      creatorId: req.session.userId,
+    }).save();
   }
 
   //Delete Post
   @Mutation(() => Boolean)
-  async deleteImage(
-    @Arg("id") id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<boolean> {
-    await em.nativeDelete(Image, { id });
+  async deleteImage(@Arg("id") id: number): Promise<boolean> {
+    await Image.delete(id);
     return true;
   }
 }
