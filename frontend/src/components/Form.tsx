@@ -2,16 +2,19 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRegisterMutation } from "../generated/graphql";
+import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 
 function Form() {
   const [, register] = useRegisterMutation();
+  const [, login] = useLoginMutation();
   const [state, setState] = useState<any>({
     userName: "",
     password: "",
   });
   const [error, setError] = useState<any>({});
-  const [mount, setMount] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
   const router = useRouter();
   let param: any = router.query.keyword;
   function handleChange(e: any) {
@@ -30,8 +33,24 @@ function Form() {
     });
     if (response.data?.register.errors) {
       setError(toErrorMap(response.data.register.errors));
-      setMount(true);
+      setIsRegister(true);
+      setIsLogin(false);
     } else if (response.data?.register.user) {
+      // worked
+      router.push("/");
+    }
+  }
+
+  async function loginUser() {
+    const response = await login({
+      username: state.userName,
+      password: state.password,
+    });
+    if (response.data?.login.errors) {
+      setError(toErrorMap(response.data.login.errors));
+      setIsLogin(true);
+      setIsRegister(false);
+    } else if (response.data?.login.user) {
       // worked
       router.push("/");
     }
@@ -62,7 +81,10 @@ function Form() {
           onChange={handleChange}
         />
         {param === "login" ? (
-          <button className="mt-4 h-8 w-20 text-sm text-white bg-gray-800 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform">
+          <button
+            onClick={loginUser}
+            className="mt-4 h-8 w-20 text-sm text-white bg-gray-800 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform"
+          >
             Login
           </button>
         ) : (
@@ -77,11 +99,21 @@ function Form() {
           <Link
             href={{ pathname: "/userPage", query: { keyword: "register" } }}
           >
-            <h1 className="mt-2 cursor-pointer text-purple-900">Register?</h1>
+            <h1
+              onClick={() => setIsLogin(false)}
+              className="mt-2 cursor-pointer text-purple-900"
+            >
+              Register?
+            </h1>
           </Link>
         ) : null}
 
-        {mount ? <h1 className="mt-5 text-red-600">{error.username}</h1> : null}
+        {isRegister ? (
+          <h1 className="mt-5 text-red-600">{error.username}</h1>
+        ) : null}
+        {isLogin ? (
+          <h1 className="mt-5 text-red-600">{error.username}</h1>
+        ) : null}
       </div>
     </div>
   );

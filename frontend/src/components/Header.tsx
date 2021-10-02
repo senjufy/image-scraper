@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
+import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 
 function Header() {
   const [input, setInput] = useState("");
   const [show, setShow] = useState(false);
+
+  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
+  const [{ data, fetching }] = useMeQuery();
 
   function handleScroll() {
     window.scroll({
@@ -93,11 +97,26 @@ function Header() {
           </div>
         </div>
       </div>
-      <Link href={{ pathname: "/userPage", query: { keyword: "login" } }}>
-        <h2 className="text-white cursor-pointer mt-5 m-0 ml-105 leading-4 font-semibold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
-          Login/Register
-        </h2>
-      </Link>
+      {data?.me ? (
+        <div className="flex">
+          <h2 className="text-white cursor-pointer mt-5 m-0 ml-105 leading-4 font-bold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
+            {data.me.username.charAt(0).toUpperCase() +
+              data.me.username.slice(1)}
+          </h2>
+          <h2
+            onClick={() => logout()}
+            className="text-white cursor-pointer mt-5 m-0 ml-3 leading-4 font-semibold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110"
+          >
+            Logout
+          </h2>
+        </div>
+      ) : (
+        <Link href={{ pathname: "/userPage", query: { keyword: "login" } }}>
+          <h2 className="text-white cursor-pointer mt-5 m-0 ml-105 leading-4 font-semibold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
+            Login/Register
+          </h2>
+        </Link>
+      )}
     </div>
   );
 }

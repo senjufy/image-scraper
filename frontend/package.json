@@ -20,6 +20,7 @@
     "@types/styled-components": "^5.1.14",
     "axios": "^0.21.4",
     "graphql": "^15.6.0",
+    "@urql/exchange-graphcache": "^3.0.2",
     "next": "11.1.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
