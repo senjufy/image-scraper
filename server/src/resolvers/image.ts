@@ -29,11 +29,18 @@ class ImageInput {
 //Declaring crud/other database related operations/tasks.
 @Resolver()
 export class ImageResolver {
-  //Read all posts
+  //Read all images
   @Query(() => [Image])
   async images(): Promise<Image[]> {
     return Image.find();
   }
+
+  @Query(() => [Image])
+  @UseMiddleware(isAuth)
+  async imageByCreator(@Ctx() { req }: MyContext): Promise<Image[]> {
+    return Image.find({ creatorId: req.session.userId });
+  }
+
   //Mutations are updating.deleting and adding data
   @Mutation(() => Image)
   @UseMiddleware(isAuth)
@@ -47,7 +54,7 @@ export class ImageResolver {
     }).save();
   }
 
-  //Delete Post
+  //Delete image
   @Mutation(() => Boolean)
   async deleteImage(@Arg("id") id: number): Promise<boolean> {
     await Image.delete(id);
