@@ -16,7 +16,7 @@ export class Image extends BaseEntity {
   id!: number;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   imgSmall!: string;
 
   @Field()
@@ -34,6 +34,10 @@ export class Image extends BaseEntity {
   @Field()
   @Column()
   regularImage!: string;
+
+  @Field()
+  @Column()
+  imgDownload!: string;
 
   @Field()
   @Column()

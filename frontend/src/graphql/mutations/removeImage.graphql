@@ -1,0 +1,3 @@
+mutation RemoveImage($id: Float!) {
+  deleteImage(id: $id)
+}

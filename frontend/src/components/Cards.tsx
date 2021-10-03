@@ -1,6 +1,8 @@
-import React, { InputHTMLAttributes, useState } from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 import CancelIcon from "@material-ui/icons/Cancel";
+import AddBoxIcon from "@material-ui/icons/AddBox";
+import { useAddImageMutation } from "../generated/graphql";
 
 const customStyles = {
   content: {
@@ -18,7 +20,9 @@ type Props = {
 };
 
 export default function Cards({ data }: Props) {
+  const [, createImage] = useAddImageMutation();
   const [show, setShow] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   function downloadActual() {
     fetch(data.urls.raw, {
@@ -38,6 +42,21 @@ export default function Cards({ data }: Props) {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  async function addImage() {
+    const response = await createImage({
+      imgSmall: data.urls.small,
+      capturedBy: data.user.name,
+      ownerProf: data.user.profile_image.small,
+      ownerName: data.user.first_name,
+      regularImage: data.urls.regular,
+      imgDownload: data.urls.raw,
+    });
+
+    if (response.data?.createImage.errors) {
+      setShowError(true);
+    }
   }
 
   return (
@@ -76,14 +95,23 @@ export default function Cards({ data }: Props) {
             <p className="text-xs ml-2 text-white">{data.user.username}</p>
           </div>
           <button
-            onClick={downloadActual}
+            onClick={() => downloadActual}
             className="ml-97 h-8 px-3 text-sm text-white bg-gray-700 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform"
           >
             Download
           </button>
+          {showError ? (
+            <h1 className="text-white text-xs w-3 ml-3">Already Added</h1>
+          ) : (
+            <AddBoxIcon
+              onClick={addImage}
+              className="mt-1 ml-2 text-white bg-gray-700 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform"
+            />
+          )}
+
           <CancelIcon
             onClick={() => setShow(false)}
-            className="mt-1 ml-60 text-white bg-gray-700 rounded-md border border-red-400 focus:shadow-outline hover:border-red-500 hover:bg-red-500 transition duration-500 hover:scale-105 transform"
+            className="mt-1 right-16 fixed text-white bg-gray-700 rounded-md border border-red-400 focus:shadow-outline hover:border-red-500 hover:bg-red-500 transition duration-500 hover:scale-105 transform"
           />
         </div>
 
@@ -116,7 +144,9 @@ export default function Cards({ data }: Props) {
 }
 
 export function CardsNew({ newData }: Props) {
+  const [, createImage] = useAddImageMutation();
   const [show, setShow] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   function downloadActual() {
     fetch(newData.largeImageURL, {
@@ -136,6 +166,21 @@ export function CardsNew({ newData }: Props) {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  async function addImage() {
+    const response = await createImage({
+      imgSmall: newData.largeImageURL,
+      capturedBy: newData.user,
+      ownerProf: newData.userImageURL,
+      ownerName: newData.user,
+      regularImage: newData.largeImageURL,
+      imgDownload: newData.largeImageURL,
+    });
+
+    if (response.data?.createImage.errors) {
+      setShowError(true);
+    }
   }
 
   return (
@@ -171,9 +216,17 @@ export function CardsNew({ newData }: Props) {
           >
             Download
           </button>
+          {showError ? (
+            <h1 className="text-white text-xs w-3 ml-3">Already Added</h1>
+          ) : (
+            <AddBoxIcon
+              onClick={addImage}
+              className="mt-1 ml-2 text-white bg-gray-700 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform"
+            />
+          )}
           <CancelIcon
             onClick={() => setShow(false)}
-            className="mt-1 ml-60 text-white bg-gray-700 rounded-md border border-red-400 focus:shadow-outline hover:border-red-500 hover:bg-red-500 transition duration-500 hover:scale-105 transform"
+            className="mt-1 right-16 fixed text-white bg-gray-700 rounded-md border border-red-400 focus:shadow-outline hover:border-red-500 hover:bg-red-500 transition duration-500 hover:scale-105 transform"
           />
         </div>
 

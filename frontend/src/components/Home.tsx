@@ -46,10 +46,7 @@ function HomePage() {
         <h2 className="text-gray-800 font-bold uppercase text-xl">
           From Unsplash
         </h2>
-        <div
-          onClick={() => console.log("click clicked")}
-          className="grid grid-flow-row-dense grid-cols-2 gap-3 justify-between sm:grid-cols-3 md:grid-cols-4"
-        >
+        <div className="grid grid-flow-row-dense grid-cols-2 gap-3 justify-between sm:grid-cols-3 md:grid-cols-4">
           {unsplash.map((allData) => (
             <Cards data={allData} />
           ))}

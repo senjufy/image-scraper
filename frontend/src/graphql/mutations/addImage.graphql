@@ -1,0 +1,27 @@
+mutation AddImage(
+  $imgSmall: String!
+  $capturedBy: String!
+  $ownerProf: String!
+  $ownerName: String!
+  $regularImage: String!
+  $imgDownload: String!
+) {
+  createImage(
+    input: {
+      imgSmall: $imgSmall
+      capturedBy: $capturedBy
+      ownerProf: $ownerProf
+      ownerName: $ownerName
+      regularImage: $regularImage
+      imgDownload: $imgDownload
+    }
+  ) {
+    errors {
+      message
+      field
+    }
+    image {
+      ...ImageFragment
+    }
+  }
+}

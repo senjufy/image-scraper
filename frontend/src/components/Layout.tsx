@@ -9,7 +9,10 @@ type Children = {
 
 function Layout({ children }: Children) {
   const router = useRouter();
-  const showFooter = router.pathname === "/userPage" ? false : true;
+  const showFooter =
+    router.pathname === "/userPage" || router.pathname === "/collection"
+      ? false
+      : true;
   return (
     <div>
       <>

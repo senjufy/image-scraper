@@ -3,6 +3,7 @@ import Link from "next/link";
 import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
 import { useMeQuery, useLogoutMutation } from "../generated/graphql";
+import CollectionsIcon from "@material-ui/icons/Collections";
 
 function Header() {
   const [input, setInput] = useState("");
@@ -72,10 +73,10 @@ function Header() {
       <div className="flex">
         <div className="absolute self-center">
           <div className="relative top-0 group">
-            <div className="ml-80 py-3 pl-3 pr-40 absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-200"></div>
+            <div className="ml-52 py-3 pl-3 pr-40 absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-200"></div>
             <input
               type="text"
-              className="relative text-white ml-80 py-3 pl-3 pr-40 bg-black rounded-lg leading-none"
+              className="relative text-white ml-52 py-3 pl-3 pr-40 bg-black rounded-lg leading-none"
               placeholder="search free images"
               onChange={handleChange}
               value={input}
@@ -98,8 +99,14 @@ function Header() {
         </div>
       </div>
       {data?.me ? (
-        <div className="flex">
-          <h2 className="text-white cursor-pointer mt-5 m-0 ml-105 leading-4 font-bold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
+        <div className="flex ml-105">
+          <Link href="/collection">
+            <div className="flex text-white cursor-pointer mt-5 m-0 leading-4 font-bold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
+              <CollectionsIcon className="-mt-1" />
+              <h1 className="ml-2">Collections</h1>
+            </div>
+          </Link>
+          <h2 className="text-white cursor-pointer mt-5 m-0 ml-4 leading-4 font-bold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
             {data.me.username.charAt(0).toUpperCase() +
               data.me.username.slice(1)}
           </h2>
@@ -112,7 +119,7 @@ function Header() {
         </div>
       ) : (
         <Link href={{ pathname: "/userPage", query: { keyword: "login" } }}>
-          <h2 className="text-white cursor-pointer mt-5 m-0 ml-105 leading-4 font-semibold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
+          <h2 className="text-white cursor-pointer mt-5 m-0 ml-106 leading-4 font-semibold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110">
             Login/Register
           </h2>
         </Link>

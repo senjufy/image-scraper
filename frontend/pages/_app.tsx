@@ -10,6 +10,7 @@ import {
   MeQuery,
   RegisterMutation,
   LogoutMutation,
+  ImageByCreatorDocument,
 } from "../src/generated/graphql";
 
 function betterUpdateQuery<Result, Query>(

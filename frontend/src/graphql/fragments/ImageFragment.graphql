@@ -1,0 +1,10 @@
+fragment ImageFragment on Image {
+  id
+  imgSmall
+  capturedBy
+  ownerProf
+  ownerName
+  regularImage
+  creatorId
+  imgDownload
+}
