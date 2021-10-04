@@ -4,7 +4,7 @@ import Form from "../src/components/Form";
 function userPage() {
   return (
     <div>
-      <Form></Form>
+      <Form />
     </div>
   );
 }

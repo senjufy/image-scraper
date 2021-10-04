@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRegisterMutation } from "../generated/graphql";
 import { useLoginMutation } from "../generated/graphql";
-import { toErrorMap } from "../utils/toErrorMap";
 
 function Form() {
   const [, register] = useRegisterMutation();
@@ -32,7 +31,7 @@ function Form() {
       password: state.password,
     });
     if (response.data?.register.errors) {
-      setError(toErrorMap(response.data.register.errors));
+      setError("User Already Exists");
       setIsRegister(true);
       setIsLogin(false);
     } else if (response.data?.register.user) {
@@ -47,7 +46,7 @@ function Form() {
       password: state.password,
     });
     if (response.data?.login.errors) {
-      setError(toErrorMap(response.data.login.errors));
+      setError("UserName or Password incorrect");
       setIsLogin(true);
       setIsRegister(false);
     } else if (response.data?.login.user) {
@@ -108,12 +107,8 @@ function Form() {
           </Link>
         ) : null}
 
-        {isRegister ? (
-          <h1 className="mt-5 text-red-600">{error.username}</h1>
-        ) : null}
-        {isLogin ? (
-          <h1 className="mt-5 text-red-600">{error.username}</h1>
-        ) : null}
+        {isRegister ? <h1 className="mt-5 text-red-600">{error}</h1> : null}
+        {isLogin ? <h1 className="mt-5 text-red-600">{error}</h1> : null}
       </div>
     </div>
   );

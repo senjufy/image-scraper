@@ -18,7 +18,7 @@ function featured() {
       <h2 className="font-bold uppercase text-xl">{param}</h2>
       <div className="grid grid-flow-row-dense grid-cols-2 gap-3 justify-between sm:grid-cols-3 md:grid-cols-4">
         {searchUnsplash.map((all) => (
-          <Cards data={all} />
+          <Cards dataImg={all} />
         ))}
 
         {searchPixabay.map((all) => (

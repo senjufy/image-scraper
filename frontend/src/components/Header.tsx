@@ -4,8 +4,10 @@ import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
 import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 import CollectionsIcon from "@material-ui/icons/Collections";
+import { useRouter } from "next/router";
 
 function Header() {
+  const router = useRouter();
   const [input, setInput] = useState("");
   const [show, setShow] = useState(false);
 
@@ -111,7 +113,10 @@ function Header() {
               data.me.username.slice(1)}
           </h2>
           <h2
-            onClick={() => logout()}
+            onClick={async () => {
+              await logout();
+              router.reload();
+            }}
             className="text-white cursor-pointer mt-5 m-0 ml-3 leading-4 font-semibold text-md transform hover:text-blue-500 transition duration-500 hover:scale-110"
           >
             Logout

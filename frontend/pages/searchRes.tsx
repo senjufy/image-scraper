@@ -41,7 +41,7 @@ function searchRes() {
         </h2>
         <div className="grid grid-flow-row-dense grid-cols-2 gap-3 justify-between sm:grid-cols-3 md:grid-cols-4">
           {searchUnsplash.map((allData) => (
-            <Cards data={allData} />
+            <Cards dataImg={allData} />
           ))}
         </div>
         <button

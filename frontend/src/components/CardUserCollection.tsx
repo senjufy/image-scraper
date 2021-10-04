@@ -36,6 +36,7 @@ function CardUserCollection({ collection }: Props) {
       .catch((err) => {
         console.log(err);
       });
+    console.log(collection.imgDownload);
   }
 
   return (
@@ -66,7 +67,7 @@ function CardUserCollection({ collection }: Props) {
             </p>
           </div>
           <button
-            onClick={() => downloadActual}
+            onClick={downloadActual}
             className="ml-97 h-8 px-3 text-sm text-white bg-gray-700 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform"
           >
             Download

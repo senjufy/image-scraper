@@ -3,6 +3,8 @@ import Modal from "react-modal";
 import CancelIcon from "@material-ui/icons/Cancel";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import { useAddImageMutation } from "../generated/graphql";
+import { useMeQuery } from "../generated/graphql";
+import { useRouter } from "next/router";
 
 const customStyles = {
   content: {
@@ -15,17 +17,19 @@ const customStyles = {
 };
 
 type Props = {
-  data?: any | Response;
+  dataImg?: any | Response;
   newData?: any | Response;
 };
 
-export default function Cards({ data }: Props) {
+export default function Cards({ dataImg }: Props) {
   const [, createImage] = useAddImageMutation();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState(false);
+  const router = useRouter();
+  const [{ data, fetching }] = useMeQuery();
 
   function downloadActual() {
-    fetch(data.urls.raw, {
+    fetch(dataImg.urls.raw, {
       method: "GET",
       headers: {},
     })
@@ -45,17 +49,32 @@ export default function Cards({ data }: Props) {
   }
 
   async function addImage() {
-    const response = await createImage({
-      imgSmall: data.urls.small,
-      capturedBy: data.user.name,
-      ownerProf: data.user.profile_image.small,
-      ownerName: data.user.first_name,
-      regularImage: data.urls.regular,
-      imgDownload: data.urls.raw,
-    });
+    if (data?.me) {
+      const response = await createImage({
+        imgSmall: dataImg.urls.small,
+        capturedBy: dataImg.user.name,
+        ownerProf: dataImg.user.profile_image.small,
+        ownerName: dataImg.user.first_name,
+        regularImage: dataImg.urls.regular,
+        imgDownload: dataImg.urls.raw,
+      });
+      // if (response.data?.createImage.image?.creatorId === data.me.id) {
+      //   await createImage({
+      //     imgSmall: dataImg.urls.small,
+      //     capturedBy: dataImg.user.name,
+      //     ownerProf: dataImg.user.profile_image.small,
+      //     ownerName: dataImg.user.first_name,
+      //     regularImage: dataImg.urls.regular,
+      //     imgDownload: dataImg.urls.raw,
+      //   });
+      // }
 
-    if (response.data?.createImage.errors) {
-      setShowError(true);
+      if (response.data?.createImage.errors) {
+        setShowError(true);
+        console.log(response.data?.createImage.errors);
+      }
+    } else {
+      router.push("/userPage?keyword=login");
     }
   }
 
@@ -65,13 +84,13 @@ export default function Cards({ data }: Props) {
         onClick={() => setShow(true)}
         className="border border-gray-800 border-solid h-56 w-98 rounded-sm transform hover:border-purple-600 transition duration-500 hover:scale-105"
         alt="Image"
-        src={data.urls.small}
+        src={dataImg.urls.small}
         loading="lazy"
       />
 
       {/* <h2 class="pt-2 m-0 leading-4 font-semibold">{data.user.name}</h2> */}
       <p className="text-gray-700 italic font-medium">
-        Captured By- {data.user.name}
+        Captured By- {dataImg.user.name}
       </p>
 
       <Modal isOpen={show} style={customStyles}>
@@ -79,23 +98,23 @@ export default function Cards({ data }: Props) {
           {/* <h1 className="font-semibold">{data.user.name}</h1> */}
           <img
             className="rounded-full p-1 h-11 w-11"
-            src={data.user.profile_image.small}
+            src={dataImg.user.profile_image.small}
           />
           <div
             className="flex flex-col cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
-              const url = data.user.portfolio_url;
+              const url = dataImg.user.portfolio_url;
               window.open(url, "_blank");
             }}
           >
             <p className="text-white italic font-medium ml-2">
-              {data.user.first_name}
+              {dataImg.user.first_name}
             </p>
-            <p className="text-xs ml-2 text-white">{data.user.username}</p>
+            <p className="text-xs ml-2 text-white">{dataImg.user.username}</p>
           </div>
           <button
-            onClick={() => downloadActual}
+            onClick={downloadActual}
             className="ml-97 h-8 px-3 text-sm text-white bg-gray-700 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform"
           >
             Download
@@ -116,15 +135,15 @@ export default function Cards({ data }: Props) {
         </div>
 
         <div className="">
-          <img src={data.urls.regular} className="h-98 w-98 ml-99" />
+          <img src={dataImg.urls.regular} className="h-98 w-98 ml-99" />
           <p className="text-white italic font-medium ml-2">
-            Description- {data.alt_description}
+            Description- {dataImg.alt_description}
           </p>
           <div className="flex ml-2">
             <button
               onClick={(e) => {
                 e.preventDefault();
-                const url = data.links.html;
+                const url = dataImg.links.html;
                 window.open(url, "_blank");
               }}
               className="mt-2 h-8 px-3 text-sm text-white bg-gray-700 rounded-md border-2 border-purple-500 focus:shadow-outline hover:border-purple-600 hover:bg-purple-600 transition duration-500 hover:scale-105 transform"
@@ -147,6 +166,8 @@ export function CardsNew({ newData }: Props) {
   const [, createImage] = useAddImageMutation();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState(false);
+  const router = useRouter();
+  const [{ data, fetching }] = useMeQuery();
 
   function downloadActual() {
     fetch(newData.largeImageURL, {
@@ -169,17 +190,21 @@ export function CardsNew({ newData }: Props) {
   }
 
   async function addImage() {
-    const response = await createImage({
-      imgSmall: newData.largeImageURL,
-      capturedBy: newData.user,
-      ownerProf: newData.userImageURL,
-      ownerName: newData.user,
-      regularImage: newData.largeImageURL,
-      imgDownload: newData.largeImageURL,
-    });
+    if (data?.me) {
+      const response = await createImage({
+        imgSmall: newData.largeImageURL,
+        capturedBy: newData.user,
+        ownerProf: newData.userImageURL,
+        ownerName: newData.user,
+        regularImage: newData.largeImageURL,
+        imgDownload: newData.largeImageURL,
+      });
 
-    if (response.data?.createImage.errors) {
-      setShowError(true);
+      if (response.data?.createImage.errors) {
+        setShowError(true);
+      }
+    } else {
+      router.push("/userPage?keyword=login");
     }
   }
 

@@ -10,7 +10,6 @@ import {
   MeQuery,
   RegisterMutation,
   LogoutMutation,
-  ImageByCreatorDocument,
 } from "../src/generated/graphql";
 
 function betterUpdateQuery<Result, Query>(
@@ -20,6 +19,16 @@ function betterUpdateQuery<Result, Query>(
   fn: (r: Result, q: Query) => Query
 ) {
   return cache.updateQuery(qi, (data) => fn(result, data as any) as any);
+}
+
+function invalidateImages(cache: Cache) {
+  const allFields = cache.inspectFields("Query");
+  const fieldInfos = allFields.filter(
+    (info) => info.fieldName === "imageByCreator"
+  );
+  fieldInfos.forEach((fi) => {
+    cache.invalidate("Query", "imageByCreator");
+  });
 }
 
 const client = createClient({
@@ -32,6 +41,9 @@ const client = createClient({
     cacheExchange({
       updates: {
         Mutation: {
+          createImage: (_result, args, cache, info) => {
+            invalidateImages(cache);
+          },
           logout: (_result, args, cache, info) => {
             betterUpdateQuery<LogoutMutation, MeQuery>(
               cache,
@@ -39,6 +51,7 @@ const client = createClient({
               _result,
               () => ({ me: null })
             );
+            invalidateImages(cache);
           },
           login: (_result, args, cache, info) => {
             betterUpdateQuery<LoginMutation, MeQuery>(

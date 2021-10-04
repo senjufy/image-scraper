@@ -5,7 +5,7 @@ import { useImageByCreatorQuery } from "../src/generated/graphql";
 function collection() {
   const [{ data }] = useImageByCreatorQuery();
   return (
-    <div className="max-w-full h-screen overflow-hidden bg-gray-100">
+    <div className="max-w-full overflow-hidden bg-gray-100">
       <div className="p-5 mx-auto max-w-screen-xl">
         <h2 className="text-gray-800 font-bold uppercase text-xl">
           Collections
